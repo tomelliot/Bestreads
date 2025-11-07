@@ -1,0 +1,19 @@
+{
+  "name": "bestreads",
+  "version": "1.0.0",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch index.ts"
+  },
+  "dependencies": {
+    "fastmcp": "^3.22.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

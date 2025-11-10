@@ -2,17 +2,17 @@ import { z } from "zod";
 import packageJson from "../package.json";
 
 const BookDocSchema = z.object({
-  cover_i: z.number().optional(),
+  key: z.string(),
+  cover_i: z.number(),
+  title: z.string(),
+  author_key: z.array(z.string()),
   has_fulltext: z.boolean().optional(),
   edition_count: z.number().optional(),
-  title: z.string().optional(),
   author_name: z.array(z.string()).optional(),
   first_publish_year: z.number().optional(),
-  key: z.string().optional(),
   ia: z.array(z.string()).optional(),
-  author_key: z.array(z.string()).optional(),
   public_scan_b: z.boolean().optional(),
-  isbn: z.array(z.string()).optional(),
+  isbn: z.array(z.string()),
 });
 
 const OpenLibrarySearchResponseSchema = z.object({
@@ -46,9 +46,11 @@ export interface SearchWorksOptions {
 }
 
 export interface WorkDoc {
-  title?: string;
-  author_key?: string[];
-  isbn?: string[];
+  key: string;
+  title: string;
+  author_key: string[];
+  cover_i: number;
+  isbn: string[];
 }
 
 export interface SearchWorksResponse {
@@ -60,12 +62,18 @@ export interface SearchWorksResponse {
 export async function searchWorks(
   options: SearchWorksOptions
 ): Promise<SearchWorksResponse> {
-  const { query, limit = 10, page = 1, fields } = options;
+  const {
+    query,
+    limit = 10,
+    page = 1,
+    fields = ["key", "title", "author_key", "isbn", "cover_i"],
+  } = options;
 
   const url = new URL("https://openlibrary.org/search.json");
   url.searchParams.set("q", query);
   url.searchParams.set("limit", String(limit));
   url.searchParams.set("page", String(page));
+  url.searchParams.set("sort", "rating desc");
 
   if (fields && fields.length > 0) {
     url.searchParams.set("fields", fields.join(","));
@@ -90,6 +98,8 @@ export async function searchWorks(
     start: parsed.start,
     num_found: parsed.num_found,
     docs: parsed.docs.map((doc) => ({
+      key: doc.key,
+      cover_i: doc.cover_i,
       title: doc.title,
       author_key: doc.author_key,
       isbn: doc.isbn,
@@ -117,4 +127,36 @@ export async function getAuthor(authorKey: string): Promise<Author> {
 
   const data = await response.json();
   return AuthorSchema.parse(data);
+}
+
+// Cover API wrapper
+export type CoverSize = "S" | "M" | "L";
+
+export interface GetCoverUrlOptions {
+  coverId?: number;
+  isbn?: string;
+  olid?: string;
+  size?: CoverSize;
+}
+
+/**
+ * Generates a cover URL using the Open Library Covers API
+ * @param options - Options for generating the cover URL
+ * @returns Cover URL string, or undefined if no valid identifier is provided
+ */
+export function getCoverUrl(options: GetCoverUrlOptions): string | undefined {
+  const { coverId, isbn, olid, size = "M" } = options;
+
+  if (isbn) {
+    return `https://covers.openlibrary.org/b/isbn/${isbn}-${size}.jpg`;
+  }
+
+  if (coverId !== undefined) {
+    return `https://covers.openlibrary.org/b/id/${coverId}-${size}.jpg`;
+  }
+
+  if (olid) {
+    return `https://covers.openlibrary.org/b/olid/${olid}-${size}.jpg`;
+  }
+  return undefined;
 }

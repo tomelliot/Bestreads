@@ -1,9 +1,9 @@
-import { searchWorks, getAuthor } from "./open-library-api";
+import { searchWorks, getAuthor, getCoverUrl } from "./open-library-api";
 
 export interface BookResult {
   title?: string;
   author_name?: string[];
-  isbn?: string[];
+  cover?: string;
 }
 
 export interface SearchBooksResponse {
@@ -21,14 +21,13 @@ interface SearchBooksOptions {
 export async function searchBooks(
   options: SearchBooksOptions
 ): Promise<SearchBooksResponse> {
-  const { query, limit = 10, page = 1 } = options;
+  const { query, limit = 5, page = 1 } = options;
 
   // Search for works
   const searchResults = await searchWorks({
     query,
     limit,
     page,
-    fields: ["title", "author_key", "isbn"],
   });
 
   // Fetch author names for each work
@@ -50,12 +49,20 @@ export async function searchBooks(
         });
 
         const names = await Promise.all(authorPromises);
-        authorNames.push(...names.filter((name): name is string => name !== null));
+        authorNames.push(
+          ...names.filter((name): name is string => name !== null)
+        );
       }
 
+      const coverUrl = doc.cover_i
+        ? getCoverUrl({ isbn: doc.isbn[0], coverId: doc.cover_i })
+        : undefined;
+
       return {
+        key: doc.key || "unknown",
         title: doc.title,
         author_name: authorNames.length > 0 ? authorNames : undefined,
+        cover: coverUrl || "unknown",
         isbn: doc.isbn,
       };
     })
@@ -67,4 +74,3 @@ export async function searchBooks(
     docs: docsWithAuthors,
   };
 }
-

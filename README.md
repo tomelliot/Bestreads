@@ -184,6 +184,33 @@ setState({ favorites: [...state.favorites, newItem] });
 
 **Important:** Widget state is scoped to a single widget instance and is visible to ChatGPT. Keep payloads under 4k tokens.
 
+## Design Guidelines for ChatGPT Components
+
+Components in `app/mcp-components/` must follow OpenAI's design guidelines to ensure they feel native to ChatGPT. The layout at `app/mcp-components/layout.tsx` enforces these constraints.
+
+### Key Constraints
+
+- **Typography**: Use system fonts only (inherit platform-native fonts like SF Pro on iOS, Roboto on Android). No custom fonts, even in fullscreen modes.
+- **Colors**: 
+  - Use system colors for text, icons, and spatial elements (dividers, backgrounds)
+  - Brand colors are **only allowed on primary buttons** via CSS variables (`--brand-primary`)
+  - Do not override text colors or backgrounds with brand colors
+- **Spacing**: Use system grid spacing and maintain consistent padding
+- **Accessibility**: Maintain WCAG AA contrast ratios, provide alt text for images, support text resizing
+
+### Using Brand Colors on Buttons
+
+```tsx
+// Apply brand color to primary buttons
+<button data-brand="primary" className="btn-primary">
+  Action
+</button>
+```
+
+The brand color CSS variables are defined in `app/mcp-components/widgets.css` and can be customized per your brand.
+
+**Full guidelines:** See [`docs/openai/design-guidelines .md`](server/docs/openai/design-guidelines%20.md) for complete visual design, tone, and interaction guidelines.
+
 ## Passing Data Between Tool and Component
 
 ### Tool → Component
@@ -231,12 +258,16 @@ server/
 ├── app/
 │   ├── mcp/
 │   │   └── route.ts          # MCP server (tools & resources)
+│   ├── mcp-components/       # ChatGPT widget components
+│   │   ├── layout.tsx        # Widget layout (system fonts, SDK bootstrap)
+│   │   ├── widgets.css       # Widget styles (design guidelines)
+│   │   └── [component]/      # Individual widget pages
 │   ├── hooks/                # ChatGPT SDK hooks
 │   │   ├── use-widget-props.ts
 │   │   ├── use-widget-state.ts
 │   │   └── ...
-│   ├── page.tsx              # Example component
-│   └── layout.tsx            # SDK bootstrap
+│   ├── page.tsx              # Website landing page
+│   └── layout.tsx            # Website layout (custom fonts)
 └── middleware.ts             # CORS handling
 ```
 

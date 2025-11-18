@@ -36,7 +36,7 @@ const handler = createMcpHandler(async (server) => {
   // Book search widget
   const searchResultsHtml = await getAppsSdkCompatibleHtml(
     baseURL,
-    "/search-results"
+    "/mcp-components/search-results"
   );
 
   const searchBooksWidget: ContentWidget = {
@@ -87,7 +87,9 @@ const handler = createMcpHandler(async (server) => {
       inputSchema: {
         query: z
           .string()
-          .describe("The search term to find books (e.g., title, author, ISBN)"),
+          .describe(
+            "The search term to find books (e.g., title, author, ISBN)"
+          ),
       },
       _meta: widgetMeta(searchBooksWidget),
     },

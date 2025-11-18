@@ -1,6 +1,7 @@
 import { baseURL } from "@/baseUrl";
 import { createMcpHandler } from "mcp-handler";
 import { z } from "zod";
+import { searchBooks } from "@/services/search-books";
 
 export const revalidate = 0;
 
@@ -32,27 +33,32 @@ function widgetMeta(widget: ContentWidget) {
 }
 
 const handler = createMcpHandler(async (server) => {
-  const html = await getAppsSdkCompatibleHtml(baseURL, "/");
+  // Book search widget
+  const searchResultsHtml = await getAppsSdkCompatibleHtml(
+    baseURL,
+    "/search-results"
+  );
 
-  const contentWidget: ContentWidget = {
-    id: "show_content",
-    title: "Show Content",
-    templateUri: "ui://widget/content-template.html",
-    invoking: "Loading content...",
-    invoked: "Content loaded",
-    html: html,
-    description: "Displays the homepage content",
-    widgetDomain: "https://nextjs.org/docs",
+  const searchBooksWidget: ContentWidget = {
+    id: "search_books",
+    title: "Search Books",
+    templateUri: "ui://widget/search-books-template.html",
+    invoking: "Searching for books...",
+    invoked: "Book search completed",
+    html: searchResultsHtml,
+    description: "Displays book search results",
+    widgetDomain: "https://openlibrary.org",
   };
+
   server.registerResource(
-    "content-widget",
-    contentWidget.templateUri,
+    "search-books-widget",
+    searchBooksWidget.templateUri,
     {
-      title: contentWidget.title,
-      description: contentWidget.description,
+      title: searchBooksWidget.title,
+      description: searchBooksWidget.description,
       mimeType: "text/html+skybridge",
       _meta: {
-        "openai/widgetDescription": contentWidget.description,
+        "openai/widgetDescription": searchBooksWidget.description,
         "openai/widgetPrefersBorder": true,
       },
     },
@@ -61,11 +67,11 @@ const handler = createMcpHandler(async (server) => {
         {
           uri: uri.href,
           mimeType: "text/html+skybridge",
-          text: `<html>${contentWidget.html}</html>`,
+          text: `<html>${searchBooksWidget.html}</html>`,
           _meta: {
-            "openai/widgetDescription": contentWidget.description,
+            "openai/widgetDescription": searchBooksWidget.description,
             "openai/widgetPrefersBorder": true,
-            "openai/widgetDomain": contentWidget.widgetDomain,
+            "openai/widgetDomain": searchBooksWidget.widgetDomain,
           },
         },
       ],
@@ -73,31 +79,42 @@ const handler = createMcpHandler(async (server) => {
   );
 
   server.registerTool(
-    contentWidget.id,
+    searchBooksWidget.id,
     {
-      title: contentWidget.title,
+      title: searchBooksWidget.title,
       description:
-        "Fetch and display the homepage content with the name of the user",
+        "Search for books using Open Library API. Returns the top 3 results with titles, authors, and cover images.",
       inputSchema: {
-        name: z
+        query: z
           .string()
-          .describe("The name of the user to display on the homepage"),
+          .describe("The search term to find books (e.g., title, author, ISBN)"),
       },
-      _meta: widgetMeta(contentWidget),
+      _meta: widgetMeta(searchBooksWidget),
     },
-    async ({ name }) => {
+    async ({ query }) => {
+      const results = await searchBooks({ query, limit: 3, page: 1 });
+
+      // Format results for the component
+      const topResults = results.docs.slice(0, 3).map((book) => ({
+        title: book.title || "Unknown Title",
+        author_name: book.author_name || ["Unknown Author"],
+        cover: book.cover && book.cover !== "unknown" ? book.cover : undefined,
+        key: book.key,
+      }));
+
       return {
         content: [
           {
             type: "text",
-            text: name,
+            text: `Found ${results.num_found} books. Showing top 3 results.`,
           },
         ],
         structuredContent: {
-          name: name,
-          timestamp: new Date().toISOString(),
+          query,
+          results: topResults,
+          totalFound: results.num_found,
         },
-        _meta: widgetMeta(contentWidget),
+        _meta: widgetMeta(searchBooksWidget),
       };
     }
   );

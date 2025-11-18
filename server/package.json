@@ -1,20 +1,28 @@
 {
-  "name": "bestreads",
-  "version": "1.0.0",
-  "module": "index.ts",
-  "type": "module",
+  "name": "openai-apps-minimal-nextjs",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "dev": "bun --watch index.ts"
+    "dev": "next dev --turbopack",
+    "build": "next build --turbopack",
+    "start": "next start"
   },
   "dependencies": {
-    "fastmcp": "^3.22.0",
-    "zod": "^3.25.76"
+    "@ainativekit/ui": "^0.12.0",
+    "@modelcontextprotocol/sdk": "^1.20.0",
+    "mcp-handler": "^1.0.2",
+    "next": "^16.0.3",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "zod": "3.24.2"
   },
   "devDependencies": {
-    "@types/express": "^5.0.5",
-    "bun-types": "latest"
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "tailwindcss": "^4",
+    "typescript": "^5"
   },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  }
+  "packageManager": "pnpm@10.14.0+sha512.ad27a79641b49c3e481a16a805baa71817a04bbe06a38d17e60e2eaee83f6a146c6a688125f5792e48dd5ba30e7da52a5cda4c3992b9ccf333f9ce223af84748"
 }

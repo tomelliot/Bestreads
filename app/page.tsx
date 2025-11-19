@@ -1,7 +1,7 @@
 import { CopyButton } from "./components/copy-button";
 
 export default function Home() {
-  const url = "bestreads.tomelliot.net/mcp";
+  const url = "https://bestreads.tomelliot.net/mcp";
 
   return (
     <div className="min-h-screen flex items-center justify-center p-8 md:p-12">

@@ -2,7 +2,10 @@
 
 import { useEffect } from "react";
 import SearchResultsPage from "@/app/mcp-components/search-results/page";
-import { SET_GLOBALS_EVENT_TYPE, SetGlobalsEvent } from "@/app/hooks/types";
+import {
+  SET_GLOBALS_EVENT_TYPE,
+  SetGlobalsEvent,
+} from "@/app/mcp-components/hooks/types";
 
 // Mock book data for testing
 const mockBookResults = [

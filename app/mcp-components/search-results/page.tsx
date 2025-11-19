@@ -1,6 +1,6 @@
 "use client";
 
-import { useWidgetProps } from "@/app/hooks";
+import { useWidgetProps } from "@/app/mcp-components/hooks";
 import { ImageCard, Carousel, ThemeProvider } from "@ainativekit/ui";
 import "@ainativekit/ui/styles";
 

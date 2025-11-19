@@ -94,7 +94,7 @@ export class SetGlobalsEvent extends CustomEvent<{
  */
 declare global {
   interface Window {
-    openai: API & OpenAIGlobals;
+    // openai: API & OpenAIGlobals; unneeded as it's duplicated in @ainativekit: node_modules/@ainativekit/ui/dist/hooks/openai/types.d.ts
     innerBaseUrl: string;
   }
 

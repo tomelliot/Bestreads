@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import PlausibleProvider from "next-plausible";
 
 const playfairDisplay = Playfair_Display({
   variable: "--font-display",
@@ -28,7 +29,9 @@ export default function RootLayout({
       <body
         className={`${playfairDisplay.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <PlausibleProvider domain="bestreads.tomelliot.net">
+          {children}
+        </PlausibleProvider>
       </body>
     </html>
   );

@@ -1,9 +1,11 @@
 import { searchWorks, getAuthor, getCoverUrl } from "./open-library-api";
 
 export interface BookResult {
+  key?: string;
   title?: string;
   author_name?: string[];
   cover?: string;
+  isbn?: string[];
 }
 
 export interface SearchBooksResponse {

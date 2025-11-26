@@ -1,4 +1,5 @@
 import { CopyButton } from "./components/copy-button";
+import MuxPlayer from "@mux/mux-player-react";
 
 export default function Home() {
   const url = "https://bestreads.tomelliot.net/mcp";
@@ -15,6 +16,21 @@ export default function Home() {
             recommendations, explore genres, and discover new authors through
             natural conversation.
           </p>
+        </div>
+
+        <div className="space-y-6 animate-[fadeInUp_0.8s_ease-out_0.2s_both]">
+          <h2 className="text-3xl md:text-4xl font-bold text-accent">Demo</h2>
+          <MuxPlayer
+            streamType="on-demand"
+            playbackId="a029OMDRw3kPlmw3jq601WnSb9XefFQLh7Tkew19WtQTs"
+            metadata={{
+              video_id: "cfXrW6Wer6va9BLojQfpaCjEhxrsuHiDezUooHRYMu8",
+              video_title: "Bestreads",
+            }}
+            accentColor="#ff6b35"
+            thumbnailTime={200}
+            className="rounded-2xl overflow-hidden"
+          />
         </div>
 
         <div className="space-y-6 animate-[fadeInUp_0.8s_ease-out_0.2s_both]">

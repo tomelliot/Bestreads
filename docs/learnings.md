@@ -8,3 +8,4 @@
     - even then, updating the component doesn't cause a reload unless you force the page to be re-rendered by going to that page in your browser
 - OpenAI provides guidelines on styling - they want to keep things uniform. Branding can be applied to things like buttons and accents, but they wnat you to use the default fonts etc.
     
+- OpenAI starts requesting a bunch of endpoints to see if the server has obvious security issues (openai-vulnerability-testing.png)

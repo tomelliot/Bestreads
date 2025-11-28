@@ -29,7 +29,7 @@ export default function Home() {
             }}
             accentColor="#ff6b35"
             thumbnailTime={200}
-            className="rounded-2xl overflow-hidden"
+            className="rounded-2xl overflow-hidden max-w-96"
           />
         </div>
 
